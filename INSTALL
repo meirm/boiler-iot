@@ -1,0 +1,5 @@
+Install
+Copy files to /usr/local/bin
+
+Dependencies:
+daemon.pl -> https://www.github.com/meirm/daemon.pl
