@@ -1,0 +1,70 @@
+#!/bin/bash
+
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+dud_reset(){
+        PIDFILE=/var/lock/dud.pid
+        if [ -f $PIDFILE ] ; then
+                kill `cat $PIDFILE`
+                rm $PIDFILE
+        fi
+        /usr/local/bin/dud.py 0
+}
+
+dud_status(){
+        /usr/local/bin/dud.py
+}
+
+dud_xmin(){
+        dud_reset
+        PIDFILE=/var/lock/dud.pid
+        echo $$ > $PIDFILE
+        /usr/local/bin/dud.py 1
+        sleep $(( 60 * $1 ))
+        /usr/local/bin/dud/py 0
+        rm $PIDFILE
+}
+
+dud_off(){
+	dud_reset
+}
+
+dud_on(){
+	dud_reset >/dev/null
+	/usr/local/bin/dud.py 1
+}
+
+CMD=$1;
+if [ $# -eq 0 ]; then
+	CMD="--help"
+fi
+case $CMD in
+	on)
+	dud_on
+	;;
+	off)
+	dud_off
+	;;
+	status)
+	dud_status
+	;;
+	reset)
+	dud_reset
+	;;
+	xmin)
+        dud_xmin $2
+        ;;
+	--help|-h)
+	echo "dud-ctl version 1.0"
+	echo "Usage:"
+	echo "dud-ctl <on|off|reset|status>"
+	echo "dud-ctl xmin <min>"
+	;;
+	*)
+	exit 3
+	;;
+esac
+sleep 2
