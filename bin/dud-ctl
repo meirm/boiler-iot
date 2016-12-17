@@ -24,7 +24,7 @@ dud_xmin(){
         echo $$ > $PIDFILE
         /usr/local/bin/dud.py 1
         sleep $(( 60 * $1 ))
-        /usr/local/bin/dud/py 0
+        /usr/local/bin/dud.py 0
         rm $PIDFILE
 }
 
